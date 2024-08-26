@@ -6,7 +6,7 @@
 Wazuh Alerting to Multiple Slack Channels by Severity
 ======================================================
 
-The Wazuh Integrator module allows Wazuh to connect to external APIs and alerting tools such as `Slack`_, `PagerDuty`_, `VirusTotal`_, `Shuffle`_, and `Maltiverse`_. You can also configure the Integrator module to connect to other software. These integrations empower security administrators to enhance orchestration, automate responses, and fortify their defenses against cyber threats.
+The Wazuh Integrator module allows Wazuh to connect to external APIs and alerting tools such as Slack, PagerDuty, VirusTotal, Shuffle, and Maltiverse. You can also configure the Integrator module to connect to other software. These integrations empower security administrators to enhance orchestration, automate responses, and fortify their defenses against cyber threats.
 
 Creating an integration script
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
