@@ -22,14 +22,13 @@ You are recommended to follow the instructions below when creating an integratio
       # chmod 750 /var/ossec/integrations/custom-slack
       # chown root:wazuh /var/ossec/integrations/custom-slack
 
-#. The first line of the integration script must indicate its interpreter, or else Wazuh won’t know how to read and execute the script. The following example line indicates the Python interpreter:
+#. Use this custom script for slack integration:
 
    .. code-block:: python
 
       #!/var/ossec/framework/python/bin/python3
       # Copyright (C) 2015, Wazuh Inc.
       # March 13, 2018.
-      #
       # This program is free software; you can redistribute it
       # and/or modify it under the terms of the GNU General Public
       # License (version 2) as published by the FSF - Free Software
@@ -41,148 +40,151 @@ You are recommended to follow the instructions below when creating an integratio
       import os
 
       try:
-        import requests
-        from requests.auth import HTTPBasicAuth
+          import requests
+          from requests.auth import HTTPBasicAuth
       except Exception as e:
-        print("No module 'requests' found. Install: pip install requests")
-        sys.exit(1)
+          print("No module 'requests' found. Install: pip install requests")
+          sys.exit(1)
+
+      # Global vars
+
+      debug_enabled = False
+      pwd = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+      json_alert = {}
+      now = time.strftime("%a %b %d %H:%M:%S %Z %Y")
+
+      webhook1 = "https://hooks.slack.com/services/XXXXXXXXXXXXXX"
+      webhook2 = "https://hooks.slack.com/services/XXXXXXXXXXXXXX"
+      webhook3 = "https://hooks.slack.com/services/XXXXXXXXXXXXXX"
+
+      # Set paths
+      log_file = '{0}/logs/integrations.log'.format(pwd)
+
+
+      def main(args):
+          debug("# Starting")
+
+          # Read args
+          alert_file_location = args[1]
+
+          debug("# File location")
+          debug(alert_file_location)
+
+          # Load alert. Parse JSON object.
+          with open(alert_file_location) as alert_file:
+              json_alert = json.load(alert_file)
+          debug("# Processing alert")
+          debug(json_alert)
+
+          debug("# Generating message")
+          msg = generate_and_send_msg(json_alert)
 
 
 
-    # Global vars
-
-    debug_enabled = False
-    pwd = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    json_alert = {}
-    now = time.strftime("%a %b %d %H:%M:%S %Z %Y")
-
-    webhook1 = "https://hooks.slack.com/services/XXXXX"
-    webhook2 = "https://hooks.slack.com/services/XXXXX"
-    webhook3 = "https://hooks.slack.com/services/XXXXX"
-
-    # Set paths
-    log_file = '{0}/logs/integrations.log'.format(pwd)
+      def debug(msg):
+          if debug_enabled:
+              msg = "{0}: {1}\n".format(now, msg)
+              print(msg)
+              f = open(log_file, "a")
+              f.write(msg)
+              f.close()
 
 
-    def main(args):
-        debug("# Starting")
+      def generate_and_send_msg(alert):
 
-        # Read args
-        alert_file_location = args[1]
+          level = alert['rule']['level']
 
-        debug("# File location")
-        debug(alert_file_location)
+          if (level <= 10):
+              color = "good"
+          elif (level >= 11 and level <= 14):
+              color = "warning"
+          else:
+              color = "danger"
 
-        # Load alert. Parse JSON object.
-        with open(alert_file_location) as alert_file:
-            json_alert = json.load(alert_file)
-        debug("# Processing alert")
-        debug(json_alert)
+          msg = {}
+          msg['color'] = color
+          msg['pretext'] = "WAZUH Alert"
+          msg['title'] = alert['rule']['description'] if 'description' in alert['rule'] else "N/A"
+          msg['text'] = alert.get('full_log')
 
-        debug("# Generating message")
-        msg = generate_and_send_msg(json_alert)
+          msg['fields'] = []
+          if 'agent' in alert:
+              msg['fields'].append({
+                  "title": "Agent",
+                  "value": "({0}) - {1}".format(
+                      alert['agent']['id'],
+                      alert['agent']['name']
+                  ),
+              })
+          if 'agentless' in alert:
+              msg['fields'].append({
+                  "title": "Agentless Host",
+                  "value": alert['agentless']['host'],
+              })
+          msg['fields'].append({"title": "Location", "value": alert['location']})
+          msg['fields'].append({
+              "title": "Rule ID",
+              "value": "{0} _(Level {1})_".format(alert['rule']['id'], level),
+          })
 
+          msg['ts'] = alert['id']
+          attach = {'attachments': [msg]}
+          if (level > 6 and level <= 11):
+              webhook = webhook1
+          elif (level > 11  and level <= 14):
+              webhook = webhook2
+          elif (level > 14):
+              webhook = webhook3 
 
+          headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+          msg = json.dumps(attach)
+          debug(msg)
 
-    def debug(msg):
-        if debug_enabled:
-            msg = "{0}: {1}\n".format(now, msg)
-            print(msg)
-            f = open(log_file, "a")
-            f.write(msg)
-            f.close()
-
-
-    def generate_and_send_msg(alert):
-
-        level = alert['rule']['level']
-
-        if (level <= 4):
-            color = "good"
-        elif (level >= 5 and level <= 7):
-            color = "warning"
-        else:
-            color = "danger"
-
-        msg = {}
-        msg['color'] = color
-        msg['pretext'] = "WAZUH Alert"
-    msg['title'] = alert['rule']['description'] if 'description' in alert['rule'] else "N/A"
-    msg['text'] = alert.get('full_log')
-
-    msg['fields'] = []
-    if 'agent' in alert:
-        msg['fields'].append({
-            "title": "Agent",
-            "value": "({0}) - {1}".format(
-                alert['agent']['id'],
-                alert['agent']['name']
-            ),
-        })
-    if 'agentless' in alert:
-        msg['fields'].append({
-            "title": "Agentless Host",
-            "value": alert['agentless']['host'],
-        })
-    msg['fields'].append({"title": "Location", "value": alert['location']})
-    msg['fields'].append({
-        "title": "Rule ID",
-        "value": "{0} _(Level {1})_".format(alert['rule']['id'], level),
-    })
-
-    msg['ts'] = alert['id']
-    attach = {'attachments': [msg]}
-    if (level > 6 and level <= 11):
-        webhook = webhook1
-    elif (level > 11  and level <= 14):
-        webhook = webhook2
-    elif (level > 14):
-        webhook = webhook3 
-
-    headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-    msg = json.dumps(attach)
-    debug(msg)
-
-    debug("# Sending message")
-    res = requests.post(webhook, data=msg, headers=headers)
-    debug(res)
+          debug("# Sending message")
+          res = requests.post(webhook, data=msg, headers=headers)
+          debug(res)
 
 
 
 
-    if __name__ == "__main__":
-        try:
-            # Read arguments
-        bad_arguments = False
-        if len(sys.argv) >= 2:
-            msg = '{0} {1} {2}'.format(
-                now,
-                sys.argv[1],
-                sys.argv[2] if len(sys.argv) > 2 else '',
-            )
-            debug_enabled = (len(sys.argv) > 2 and sys.argv[2] == 'debug')
-        else:
-            msg = '{0} Wrong arguments'.format(now)
-            bad_arguments = True
+      if __name__ == "__main__":
+          try:
+              # Read arguments
+              bad_arguments = False
+              if len(sys.argv) >= 2:
+                  msg = '{0} {1} {2}'.format(
+                      now,
+                      sys.argv[1],
+                      sys.argv[2] if len(sys.argv) > 2 else '',
+                  )
+                  debug_enabled = (len(sys.argv) > 2 and sys.argv[2] == 'debug')
+              else:
+                  msg = '{0} Wrong arguments'.format(now)
+                  bad_arguments = True
 
-        # Logging the call
-        f = open(log_file, 'a')
-        f.write(msg + '\n')
-        f.close()
+              # Logging the call
+              f = open(log_file, 'a')
+              f.write(msg + '\n')
+              f.close()
 
-        if bad_arguments:
-            debug("# Exiting: Bad arguments.")
-            sys.exit(1)
+              if bad_arguments:
+                  debug("# Exiting: Bad arguments.")
+                  sys.exit(1)
 
-        # Main function
-        main(sys.argv)
+              # Main function
+              main(sys.argv)
 
-    except Exception as e:
-        debug(str(e))
-        raise
+          except Exception as e:
+              debug(str(e))
+              raise
 
+#. Modify the Slack integration script to send the appropriate alerts to the appropriate channels. For this create three Webhooks, one for each channel, and update them in the script in the following section:
 
+   .. code-block:: python
 
+      webhook1 = "https://hooks.slack.com/services/XXXXXXXXXXXXXX"
+      webhook2 = "https://hooks.slack.com/services/XXXXXXXXXXXXXX"
+      webhook3 = "https://hooks.slack.com/services/XXXXXXXXXXXXXX"
 
 Wazuh Manager Configuration
 ---------------------------
@@ -193,7 +195,7 @@ To configure this integration, add the following configuration within the ``<oss
 
    <integration>
      <name>custom-slack</name>
-     <level>10</level>
+     <level>6</level>
      <alert_format>json</alert_format>
    </integration>
 
@@ -209,16 +211,15 @@ Where:
 
 Restart the Wazuh manager via the command line interface with the following command:
 
-   .. tabs::
 
-      .. group-tab:: Systemd
+Systemd
 
-         .. code-block:: console
+   .. code-block:: console
 
             # systemctl restart wazuh-manager
-      .. group-tab:: SysV init
+SysV init
 
-         .. code-block:: console
+   .. code-block:: console
 
             # service wazuh-manager restart
 
