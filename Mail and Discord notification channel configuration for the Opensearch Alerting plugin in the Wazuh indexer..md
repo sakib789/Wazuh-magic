@@ -70,6 +70,7 @@ To test this, configure a test monitor.
 
 You can use this sample query for FIM Alerts. (Per Query monitor > Extraction query editor )
 
+```
 {
     "query": {
     "bool": {
@@ -96,7 +97,7 @@ You can use this sample query for FIM Alerts. (Per Query monitor > Extraction qu
     }
     }
 }
-
+```
 
 In the text Actions section, use the JSON format message.
 
