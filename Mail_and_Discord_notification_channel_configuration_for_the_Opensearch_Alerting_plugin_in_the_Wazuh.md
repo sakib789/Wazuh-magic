@@ -1,4 +1,4 @@
-# Notification Channel Configuration for the Opensearch Alerting Plugin in the Wazuh Indexer.
+# Notification Channel Configuration for the Opensearch Alerting Plugin in the Wazuh.
 
 ## **Mail:**
 First, configure an SMTP server on the Wazuh indexer node by following the “**SMTP server with authentication**” section of the [Wazuh documentation](https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication).
