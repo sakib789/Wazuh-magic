@@ -4,7 +4,7 @@ First, configure a SMTP server on the Wazuh indexer node following this “SMTP 
 https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication
 
 
-Now configure the SMTP sender form, **Explore** > **Notifications** > **Email senders**
+Now, configure the SMTP sender form, **Explore** > **Notifications** > **Email senders**
 
 Click on **Create SMTP sender**
 
@@ -19,7 +19,7 @@ Now configure it following this screenshot
 
 
 
-Now configure the mail channel form, **Explore** > **Notifications** > **Channels**
+Now, configure the mail channel form, **Explore** > **Notifications** > **Channels**
 
 Click on **Create channel**
 
@@ -33,26 +33,27 @@ You can test the configuration by clicking the **Send text message** at the end 
 
 # **Discord:**
 
-Create a Discord webhook from the Edit Channel > Integrations > Webhooks 
+Create a Discord webhook from the **Edit Channel** > **Integrations** > **Webhooks** 
 
 
 
-Ref: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+Ref: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks \
 Copy the webhook URL.
 
-Now configure the Discord channel form, Explore > Notifications > Channels
+Now configure the Discord channel form, **Explore** > **Notifications** > **Channels**
 
-Click on Create channel
+Click on **Create channel**
 
 Now, create a mail notification channel following this screenshot.
-
-
+<img width="3332" height="1646" alt="image" src="https://github.com/user-attachments/assets/fbc5d39b-68b1-4145-9921-a99a153088de" />
 
 Now, if you click on Send test message. It will show you this error.
 
+```
 Failed to send the test message.
 
 View error details and adjust the channel settings.
+```
 
 Nothing to worry about. 
 
@@ -68,7 +69,7 @@ Like this: {"content": "test"}
 
 To test this, configure a test monitor.
 
-You can use this sample query for FIM Alerts. (Per Query monitor > Extraction query editor )
+You can use this sample query for FIM Alerts. (**Per Query monitor** > **Extraction query editor**)
 
 ```
 {
@@ -101,18 +102,21 @@ You can use this sample query for FIM Alerts. (Per Query monitor > Extraction qu
 
 In the text Actions section, use the JSON format message.
 
-Check this screenshot for reference:
 
-
-
+```
 {"content": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue. \n- Trigger: {{ctx.trigger.name}} \n- Severity: {{ctx.trigger.severity}} \n- Period start: {{ctx.periodStart}} UTC \n- Period end: {{ctx.periodEnd}} UTC"}
-
+```
 
 
 Or 
-
+```
 {"content": "Wazuh File Integrity Monitoring \n\n{{#ctx.results.0.hits.hits}} \n- Index: {{_index}} \n- Document: {{_id}} \n- Alert Description : {{_source.rule.description}} \n- Alert id : {{_source.rule.id}} \n- FIM path : {{_source.syscheck.path}} \n- FIM event: {{_source.syscheck.event}} \n- Alert Timestamp : {{_source.@timestamp}} /n{{/ctx.results.0.hits.hits}}"}
-
+```
+Check this screenshot for reference:
+<img width="3238" height="1538" alt="image" src="https://github.com/user-attachments/assets/5877dc44-ebcb-459f-b978-b32fdf113925" />
 
 Now, if you have a FIM Alert in the last 5 minutes, you should get an alert like this when you click on the send test message.
+
+<img width="2806" height="1286" alt="image" src="https://github.com/user-attachments/assets/f3a6537e-a24e-4079-9868-278eba9559a6" />
+
 
