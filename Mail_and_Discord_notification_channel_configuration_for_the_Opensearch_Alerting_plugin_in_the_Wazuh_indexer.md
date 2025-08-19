@@ -1,20 +1,19 @@
-# **Mail:**
-First, configure a SMTP server on the Wazuh indexer node following this “SMTP server with authentication” section of this document for Wazuh.
+# Notification Channel Configuration for the Opensearch Alerting Plugin in the Wazuh Indexer.
 
-https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication
+## **Mail:**
+First, configure an SMTP server on the Wazuh indexer node by following the “**SMTP server with authentication**” section of the [Wazuh documentation](https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication).
 
-
-Now, configure the SMTP sender form, **Explore** > **Notifications** > **Email senders**
+Next, configure the SMTP sender form, **Explore** > **Notifications** > **Email senders**
 
 Click on **Create SMTP sender**
 
-Now configure it following this screenshot
+Configure it following this screenshot
 <img width="3420" height="1242" alt="image" src="https://github.com/user-attachments/assets/26cf361f-b255-42db-9b57-9219899a5942" />
 
-**Sender name**: Anything\
-**Email address**: Sender mail address that you configured in the Postfix\
-**Host**: hostname in the Postfix configuration. If you followed the document above for configuration, the host will be **localhost**\
-**Port**: 25
+* **Sender name**: Any descriptive name.
+* **Email address**: he sender email address you configured in Postfix.
+* **Host**: The hostname set in your Postfix configuration. If you followed the documentation above, use **localhost**.
+* **Port**: 25
 
 
 
@@ -25,13 +24,13 @@ Click on **Create channel**
 
 
 
-Now, create a mail notification channel following this screenshot.
+Create a mail notification channel following this screenshot.
 <img width="1600" height="789" alt="image" src="https://github.com/user-attachments/assets/57230147-d2d0-419e-a3b8-77430311aa82" />
 
 
 You can test the configuration by clicking the **Send text message** at the end of the configuration next to **Create**.
 
-# **Discord:**
+## **Discord:**
 
 Create a Discord webhook from the **Edit Channel** > **Integrations** > **Webhooks** 
 
@@ -58,14 +57,9 @@ View error details and adjust the channel settings.
 Nothing to worry about. 
 
 This is not working because of the format of the test message. The test message looks like this:
-Test message content body for config id <id>
-But that is not valid JSON. Discord expects a value for the "content" key. In the Create Monitor page, you can put in the full message. If you format it as JSON, it works.
-Like this: {"content": "test"}
-
-
-
-
-
+Test message content body for config id `<id>`
+But that is not a valid JSON. Discord expects a value for the "content" key. In the Create Monitor page, you can put in the full message. If you format it as JSON, it will work.
+Like this: `{"content": "test"}`
 
 To test this, configure a test monitor.
 
@@ -115,8 +109,12 @@ Or
 Check this screenshot for reference:
 <img width="3238" height="1538" alt="image" src="https://github.com/user-attachments/assets/5877dc44-ebcb-459f-b978-b32fdf113925" />
 
-Now, if you have a FIM Alert in the last 5 minutes, you should get an alert like this when you click on the send test message.
+If there is a FIM alert within the last 5 minutes, you should receive an alert like this when you click.
 
 <img width="2806" height="1286" alt="image" src="https://github.com/user-attachments/assets/f3a6537e-a24e-4079-9868-278eba9559a6" />
 
 
+### Reference
+[OpenSearch Alerting](https://docs.opensearch.org/latest/observing-your-data/alerting/index/) \
+[Execute Painless Script](https://opensearch.org/docs/2.10/api-reference/script-apis/exec-script/) \
+[SMTP Server Configuration](https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication)
