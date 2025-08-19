@@ -117,4 +117,6 @@ If there is a FIM alert within the last 5 minutes, you should receive an alert l
 ### Reference
 [OpenSearch Alerting](https://docs.opensearch.org/latest/observing-your-data/alerting/index/) \
 [Execute Painless Script](https://opensearch.org/docs/2.10/api-reference/script-apis/exec-script/) \
-[SMTP Server Configuration](https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication)
+[SMTP Server Configuration](https://documentation.wazuh.com/current/user-manual/manager/alert-management.html#smtp-server-with-authentication) \
+
+Test
