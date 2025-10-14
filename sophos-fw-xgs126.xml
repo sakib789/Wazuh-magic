@@ -1,0 +1,137 @@
+<group name="sophos-fw-xgs126,">
+  <rule id="111100" level="0">
+    <decoded_as>sophos-fw-xgs126</decoded_as>
+    <description>Sophos XGS event observed</description>
+  </rule>
+  
+  <!--  VPN login success  -->
+ <rule id="111101" level="3">
+   <if_sid>111100</if_sid>
+   <field name="log_type">VPN</field>
+   <field name="log_subtype">Allowed</field>
+   <description>Sophos XGS: VPN login success for user $(srcuser) from $(srcip)</description>
+   <group>vpn,authentication,</group>
+</rule>
+
+<!--  VPN login failed  -->
+<rule id="111102" level="6">
+   <if_sid>111100</if_sid>
+   <field name="log_type">VPN</field>
+   <field name="log_subtype">Denied</field>
+   <description>Sophos XGS: VPN login failed for user $(srcuser) from $(srcip)</description>
+   <group>vpn,authentication,threat,</group>
+    <mitre>
+        <id>T1110</id>
+    </mitre>
+</rule>
+
+<!--  Brute Force  -->
+<!--  Repeated VPN failures from same source  -->
+<rule id="111103" level="9" frequency="5" timeframe="300">
+    <if_matched_sid>111102</if_matched_sid>
+    <same_srcip/>
+    <description>Sophos XGS: Multiple VPN login failures from $(srcip) (≥5 in 5m)</description>
+    <group>vpn,bruteforce,authentication,threat,</group>
+    <mitre>
+        <id>T1110</id>
+    </mitre>
+</rule>
+
+
+<!--  Allowed (low level; for visibility/dashboards)  -->
+<rule id="111104" level="2">
+  <if_sid>111100</if_sid>
+  <field name="log_type">Firewall</field>
+  <field name="log_subtype">Allowed</field>
+  <description>Sophos XGS: Allowed $(srcip) → $(dstip):$(dstport) $(protocol)</description>
+  <options>no_full_log</options>
+  <group>allow,noise_reduced,</group>
+</rule>
+<!--  Denied  -->
+<rule id="111105" level="6">
+  <if_sid>111100</if_sid>
+  <field name="log_type">Firewall</field>
+  <field name="log_subtype">Denied</field>
+  <description>Sophos XGS: Denied $(srcip) → $(dstip):$(dstport) $(protocol)</description>
+  <group>deny,network,threat,</group>
+  <mitre>
+    <id>T1046</id>
+  </mitre>
+</rule>
+
+<!--  Denied burst from same src  -->
+<rule id="111106" level="9" frequency="10" timeframe="300">
+    <if_matched_sid>111105</if_matched_sid>
+    <same_srcip/>
+    <description>Sophos XGS: Multiple denied connections from $(srcip) (≥10 in 5m)</description>
+    <group>deny,bruteforce,threat,</group>
+    <mitre>
+        <id>T1110</id>
+    </mitre>
+</rule>
+
+<!--  Invalid Traffic: "Could not associate packet to any connection."  -->
+<rule id="111107" level="5">
+    <if_sid>111100</if_sid>
+    <field name="log_component">Invalid Traffic</field>
+    <match>Could not associate packet to any connection</match>
+    <description>Sophos XGS: Invalid traffic $(srcip) → $(dstip):$(dstport) (no session match)</description>
+    <group>invalid_traffic,network,</group>
+</rule>
+<!--  Spike of Invalid Traffic  -->
+<rule id="111108" level="8" frequency="20" timeframe="300">
+<if_matched_sid>111107</if_matched_sid>
+<same_srcip/>
+<description>Sophos XGS: Surge of invalid traffic from $(srcip) (≥20 in 5m)</description>
+<group>invalid_traffic,threat,</group>
+</rule>
+
+<!--  ICMP error messages  -->
+<rule id="111109" level="3">
+  <if_sid>111100</if_sid>
+<field name="log_component">ICMP ERROR MESSAGE</field>
+<description>Sophos XGS: ICMP error $(srcip) → $(dstip)</description>
+<group>icmp,network,</group>
+</rule>
+
+<!--  User and App visibility (keep low-level for dashboards)  -->
+<rule id="111110" level="2">
+  <if_sid>111100</if_sid>
+    <user>\.+</user>
+    <description>Sophos XGS: User $(srcuser) $(srcip) → $(dstip):$(dstport) $(protocol).</description>
+    <options>no_full_log</options>
+    <group>user_activity,visibility,</group>
+</rule>
+<rule id="111111" level="2">
+    <if_sid>111100</if_sid>
+    <field name="app">\.+</field>
+    <description>Sophos XGS: App $(app) $(srcip) → $(dstip):$(dstport)</description>
+    <options>no_full_log</options>
+    <group>app_activity,visibility,</group>
+</rule>
+
+<!--  Elevate on denied to sensitive ports  -->
+<rule id="111112" level="8">
+    <if_sid>111105</if_sid>
+    <regex field="dstport">^22$|^23$|^25$|^53$|^80$|^110$|^143$|^389$|^443$|^445$|^465$|^587$|^993$|^995$|^1433$|^1521$|^2049$|^2375$|^2376$|^3306$|^3389$|^5432$|^5900$|^5985$|^5986$|^6379$|^8080$|^9200$|^9300$|^11211$</regex>
+    <description>Sophos XGS: Denied to sensitive service $(dstport) from $(srcip)</description>
+    <group>deny,sensitive,threat,</group>
+</rule>
+<!--  Denied concentration on one target  -->
+<rule id="111113" level="7" frequency="30" timeframe="300">
+    <if_matched_sid>111105</if_matched_sid>
+    <same_dstip/>
+    <description>Sophos XGS: Multiple denied hits targeting $(dstip) (≥30 in 5m)</description>
+    <group>deny,threat,dos,</group>
+</rule>
+
+<!--  Denied with explicit message text  -->
+<rule id="111114" level="6">
+    <if_sid>111105</if_sid>
+    <field name="message">.+</field>
+    <description>Sophos XGS: Denied "$(message)" ($(srcip) → $(dstip):$(dstport))</description>
+    <group>deny,context,</group>
+</rule>
+
+
+</group>
