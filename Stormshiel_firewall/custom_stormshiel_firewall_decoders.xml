@@ -1,0 +1,142 @@
+<decoder name="stormshield_decoder">  
+ <prematch>id=firewall</prematch>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>time="(\.*)" </regex>  
+   <order>time</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>fw="(\.*)"</regex>  
+   <order>fw</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>tz=(\S+) </regex>  
+   <order>tz</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>startime="(\.*)"</regex>  
+   <order>startime</order>  
+</decoder>  
+
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>pri=(\S+) </regex>  
+   <order>pri</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>confid=(\S+) </regex>  
+   <order>confid</order>  
+</decoder>
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex>slotlevel=(\S+)</regex>  
+   <order>slotlevel</order>  
+</decoder>  
+
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">ruleid=(\S+) </regex>  
+   <order>ruleid</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">srcif="(\.*)"</regex>  
+   <order>srcif</order>  
+</decoder>  
+
+
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">srcifname="(\.*)" </regex>  
+   <order>srcifname</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">ipproto=(\S+)</regex>  
+   <order>ipproto</order>  
+</decoder> 
+
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">proto=(\S+) </regex>  
+   <order>proto</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">src=(\S+)</regex>  
+   <order>src</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">srcname=(\S+) </regex>  
+   <order>srcname</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">srcmac=(\S+)</regex>  
+   <order>srcmac</order>  
+</decoder>  
+
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">dst=(\S+) </regex>  
+   <order>dst</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">ipv=(\S+)</regex>  
+   <order>ipv</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">sent=(\S+) </regex>  
+   <order>sent</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">rcvd=(\S+)</regex>  
+   <order>rcvd</order>  
+</decoder>  
+
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">duration=(\S+) </regex>  
+   <order>duration</order>  
+</decoder>  
+
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">action=(\S+)</regex>  
+   <order>action</order>  
+</decoder>  
+ 
+<decoder name="stormshield_decoder_1">  
+   <parent>stormshield_decoder</parent>  
+   <regex offset="after_regex">logtype="(\.*)"</regex>  
+   <order>logtype</order>  
+</decoder>
